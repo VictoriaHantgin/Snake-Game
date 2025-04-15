@@ -4,7 +4,7 @@
 https://github.com/VictoriaHantgin/Snake-Game
 
 ## Description
-This game will be a spin on the classic snake game, where the player must collect as many points as possible without running into themself, which grows longer with each point collected. In this version, there will be different items to collect that can give the player an advantage or disadvantage.
+This game will be a spin on the classic snake game, where the player must collect as many points as possible without running into themself, which grows longer with each point collected. In this version, there will be additional items to collect such as a speed boost power-up and an extra life, similar to a one-up in mario. 
 
 ## Features
 - Feature 1: Player Character
