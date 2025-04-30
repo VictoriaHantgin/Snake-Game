@@ -4,6 +4,7 @@ from pygame.math import Vector2
 class SNAKE:
     def __init__(self):
         self.body = [Vector2(5,10), Vector2(6,10), Vector2(7,10)] #starting pos of snake
+        self.direction = Vector2(1,0)
 
     def draw_snake(self):
         for block in self.body:
@@ -17,7 +18,10 @@ class SNAKE:
     # the block before the head gets the position where the head used to be 
     # each block is moved to the position of the block that was there before it
     # "delete" the last block
-    
+        body_copy = self.body[:-1] #copies entire self.body list but removes the last element
+        body_copy.insert(0,body_copy[0] + self.direction) #places the first element(head) one block ahead, based on the direction
+        self.body = body_copy[:]
+
 
 
 
