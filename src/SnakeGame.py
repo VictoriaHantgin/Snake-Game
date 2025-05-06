@@ -12,11 +12,17 @@ class SNAKE:
         self.head_right = pygame.image.load('sprites/head_right.png').convert_alpha()
         self.head_left = pygame.image.load('sprites/head_left.png').convert_alpha()
 
+        self.tail_up = pygame.image.load('sprites/tail_up.png').convert_alpha()
+        self.tail_down = pygame.image.load('sprites/tail_down.png').convert_alpha()
+        self.tail_right = pygame.image.load('sprites/tail_right.png').convert_alpha()
+        self.tail_left = pygame.image.load('sprites/tail_left.png').convert_alpha()
+
 
 
     def draw_snake(self):
        
         self.update_head_graphics()
+        self.update_tail_graphics()
 
         for index,block in enumerate(self.body):
            # still need a rect for pos
@@ -28,7 +34,8 @@ class SNAKE:
 
             if index == 0:
                 screen.blit(self.head,block_rect)
-                #snake head direction does not update
+            elif index == len(self.body) - 1:
+                screen.blit(self.tail,block_rect)
             else:
                 pygame.draw.rect(screen,(150,100,100), block_rect)
         
@@ -39,6 +46,13 @@ class SNAKE:
         elif head_relation == Vector2(0,1):self.head = self.head_up
         elif head_relation == Vector2(0,-1):self.head = self.head_down
 
+
+    def update_tail_graphics(self):
+        tail_relation = self.body[-2] - self.body[-1]
+        if tail_relation == Vector2(1,0):self.tail = self.tail_left
+        elif tail_relation == Vector2(-1,0):self.tail = self.tail_right
+        elif tail_relation == Vector2(0,1):self.tail = self.tail_up
+        elif tail_relation == Vector2(0,-1):self.tail = self.tail_down
 
 
        
