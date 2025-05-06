@@ -7,13 +7,52 @@ class SNAKE:
         self.direction = Vector2(1,0)
         self.new_block = False
 
+        self.head_up = pygame.image.load('sprites/head_up.png').convert_alpha()
+        self.head_down = pygame.image.load('sprites/head_down.png').convert_alpha()
+        self.head_right = pygame.image.load('sprites/head_right.png').convert_alpha()
+        self.head_left = pygame.image.load('sprites/head_left.png').convert_alpha()
+
+
 
     def draw_snake(self):
-        for block in self.body:
+       
+        self.update_head_graphics()
+
+        for index,block in enumerate(self.body):
+           # still need a rect for pos
             x_pos = int(block.x * cell_size)
             y_pos = int(block.y * cell_size)
             block_rect = pygame.Rect(x_pos, y_pos, cell_size, cell_size)
-            pygame.draw.rect(screen, (183, 111, 122), block_rect)
+
+            #what direction is face heading
+
+            if index == 0:
+                screen.blit(self.head,block_rect)
+                #snake head direction does not update
+            else:
+                pygame.draw.rect(screen,(150,100,100), block_rect)
+        
+    def update_head_graphics(self):
+        head_relation = self.body[1] - self.body[0]
+        if head_relation == Vector2(1,0):self.head = self.head_left
+        elif head_relation == Vector2(-1,0):self.head = self.head_right
+        elif head_relation == Vector2(0,1):self.head = self.head_up
+        elif head_relation == Vector2(0,-1):self.head = self.head_down
+
+
+
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+        #for block in self.body:
+            #pygame.draw.rect(screen, (183, 111, 122), block_rect)
     
     def move_snake(self):
     #moving the snake: the head is moved to a new block
