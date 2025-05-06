@@ -5,6 +5,8 @@ class SNAKE:
     def __init__(self):
         self.body = [Vector2(5,10), Vector2(6,10), Vector2(7,10)] #starting pos of snake
         self.direction = Vector2(1,0)
+        self.new_block = False
+
 
     def draw_snake(self):
         for block in self.body:
@@ -18,9 +20,19 @@ class SNAKE:
     # the block before the head gets the position where the head used to be 
     # each block is moved to the position of the block that was there before it
     # "delete" the last block
-        body_copy = self.body[:-1] #copies entire self.body list but removes the last element
-        body_copy.insert(0,body_copy[0] + self.direction) #places the first element(head) one block ahead, based on the direction
-        self.body = body_copy[:]
+        if self.new_block == True:
+            body_copy = self.body[:] #copies entire self.body list 
+            body_copy.insert(0,body_copy[0] + self.direction) #places the first element(head) one block ahead, based on the direction
+            self.body = body_copy[:]
+            self.new_block = False
+        else:
+            body_copy = self.body[:-1] #copies entire self.body list except for last element
+            body_copy.insert(0,body_copy[0] + self.direction) 
+            self.body = body_copy[:]
+
+    def add_block(self):
+        self.new_block = True
+
 
 class FRUIT:
     def __init__(self):
@@ -51,8 +63,7 @@ class MAIN:
     def check_collision(self):
         if self.fruit.pos == self.snake.body[0]:
             self.fruit.randomize()
-            # repos fruit
-            # add another block to snake
+            self.snake.add_block()
 
 
 pygame.init()
