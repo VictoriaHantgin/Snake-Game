@@ -25,6 +25,7 @@ class SNAKE:
         self.body_br = pygame.image.load('sprites/body_br.png').convert_alpha()
         self.body_bl = pygame.image.load('sprites/body_bl.png').convert_alpha()
 
+        self.crunch_sound = pygame.mixer.Sound('sound/crunch.wav')
 
 
 
@@ -77,9 +78,6 @@ class SNAKE:
         elif tail_relation == Vector2(-1,0):self.tail = self.tail_right
         elif tail_relation == Vector2(0,1):self.tail = self.tail_up
         elif tail_relation == Vector2(0,-1):self.tail = self.tail_down
-
-
-
     
     def move_snake(self):
     #moving the snake: the head is moved to a new block
@@ -99,6 +97,8 @@ class SNAKE:
     def add_block(self):
         self.new_block = True
 
+    def play_crunch_sound(self):
+        self.crunch_sound.play()
 
 class FRUIT:
     def __init__(self):
@@ -135,6 +135,11 @@ class MAIN:
         if self.fruit.pos == self.snake.body[0]:
             self.fruit.randomize()
             self.snake.add_block()
+            self.snake.play_crunch_sound()
+
+        for block in self.snake.body[1:]:
+            if block == self.fruit.pos:
+                self.fruit.randomize()
 
     def check_fail(self):
         # check if the snake is outside the screen
