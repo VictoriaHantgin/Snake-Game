@@ -26,7 +26,7 @@ class SNAKE:
         self.body_bl = pygame.image.load('sprites/body_bl.png').convert_alpha()
 
         self.crunch_sound = pygame.mixer.Sound('sound/crunch.wav')
-
+        
 
 
     def draw_snake(self):
@@ -103,6 +103,7 @@ class SNAKE:
     def reset(self):
         self.body = [Vector2(5,10), Vector2(4,10), Vector2(3,10)] #starting pos of snake
         self.direction = Vector2(0,0)
+        
 class FRUIT:
     def __init__(self):
         self.randomize()
@@ -113,6 +114,19 @@ class FRUIT:
        #pygame.draw.rect(screen, (126, 166, 114), fruit_rect)
 
     def randomize(self):
+        self.x = random.randint(0, cell_number - 1)
+        self.y = random.randint(0, cell_number - 1)
+        self.pos = pygame.math.Vector2(self.x,self.y)
+
+class POWER:
+    def __init__(self):
+        self.spawn()
+
+    def draw_power(self):
+       power_rect = pygame.Rect(int(self.pos.x * cell_size),int(self.pos.y * cell_size),cell_size,cell_size)
+       screen.blit(power, power_rect)
+
+    def spawn(self):
         self.x = random.randint(0, cell_number - 1)
         self.y = random.randint(0, cell_number - 1)
         self.pos = pygame.math.Vector2(self.x,self.y)
@@ -155,6 +169,7 @@ class MAIN:
        
     def game_over(self):
         self.snake.reset()
+    
         #pygame.quit()
         #sys.exit()
     
@@ -194,10 +209,15 @@ screen = pygame.display.set_mode((cell_number * cell_size, cell_number * cell_si
 clock = pygame.time.Clock()
 applebig = pygame.image.load('sprites/apple.png').convert_alpha()
 apple = pygame.transform.smoothscale(applebig, (cell_size, cell_size))
+powerbig = pygame.image.load('sprites/powerboost.png')
+power = pygame.transform.smoothscale(powerbig, (cell_size, cell_size))
 game_font = pygame.font.Font('fonts/Howdy Frog.ttf', 25)
+pygame.mixer.music.load('sound/music.wav')
+
 
 SCREEN_UPDATE = pygame.USEREVENT
 pygame.time.set_timer(SCREEN_UPDATE, 150)
+pygame.mixer.music.play(-1, 0.0)
 
 main_game = MAIN()
 
@@ -224,5 +244,6 @@ while True:
 
     screen.fill((175,215,70)) #screen color
     main_game.draw_elements()
+    
     pygame.display.update()
     clock.tick(60) #framerate
