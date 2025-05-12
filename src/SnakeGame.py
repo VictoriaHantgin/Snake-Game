@@ -181,6 +181,7 @@ class MAIN:
         else:
             #return to main menu
             self.snake.reset()
+            running = False
             
     
     def draw_grass(self):
@@ -222,7 +223,7 @@ class MAIN:
         screen.blit(life_surface, life_rect)
         pygame.draw.rect(screen,(56,74,12),life_rect,2)
 
-class BUTTON:
+class Button:
     def __init__(self, image, pos, text_input, font, base_color, hovering_color):
         self.image = image
         self.x_pos = pos[0]
@@ -237,32 +238,64 @@ class BUTTON:
         self.text_rect = self.text.get_rect(center=(self.x_pos, self.y_pos))
     
     def update(self,screen):
-        if self.image is None:
+        if self.image is not None:
             screen.blit(self.image, self.rect)
         screen.blit(self.text, self.text_rect)
 
+    def checkForInput(self, position):
+        if position[0] in range(self.rect.left, self.rect.right) and position[1] in range(self.rect.top, self.rect.bottom):
+            return True
+        return False
     
+    def changeColor(self, position):
+        if position[0] in range(self.rect.left, self.rect.right) and position[1] in range(self.rect.top, self.rect.bottom):
+            self.text = self.font.render(self.text_input, True, self.hovering_color)
+        else:
+            self.text = self.font.render(self.text_input, True, self.base_color)
 
 
 pygame.init()
+
+cell_size = 40
+cell_number = 20
+screen = pygame.display.set_mode((cell_number * cell_size, cell_number * cell_size)) #size of window
+clock = pygame.time.Clock()
+applebig = pygame.image.load('sprites/apple.png').convert_alpha()
+apple = pygame.transform.smoothscale(applebig, (cell_size, cell_size))
+powerbig = pygame.image.load('sprites/powerboost.png')
+power = pygame.transform.smoothscale(powerbig, (cell_size, cell_size))
+pygame.mixer.music.load('sound/music.wav')
+#SCREEN = pygame.display.set_mode((1280, 720))
+game_font = pygame.font.Font('fonts/Howdy Frog.ttf', 25)
+
+
 
 def Menu():
     pygame.display.set_caption("Menu")
    
     while True:
-        SCREEN.blit(BG, (0,0))
+        SCREEN = pygame.display.set_mode((cell_number * cell_size, cell_number * cell_size))
+        SCREEN.blit(SCREEN, (0,0))
 
         MENU_MOUSE_POS = pygame.mouse.get_pos()
 
-        MENU_TEXT = game_font.render("Snake Game",True,(56,74,12))
-        MENU_RECT = MENU_TEXT.get_rect(center=(640,100))
+        menu_text = str("Snake Game")
+        title_surface = game_font.render(menu_text,True,"White")
+        title_x = int(cell_size * cell_number // 2)
+        title_y = int(cell_size * cell_number - 500)
+        title_rect = title_surface.get_rect(center = (title_x,title_y))
+        
+        pygame.draw.rect(SCREEN,(167,209,61), title_rect)
+        SCREEN.blit(title_surface,title_rect)
+        
+        #MENU_RECT = MENU_TEXT.get_rect(center=(640,100))
 
-        PLAY_BUTTON = Button(image=pygame.image.load("folder/nameoffile.png"), pos=(640, 250),
-        text_input = "PLAY", font = game_font, base_color = "idkyet", hovering_color = "White")
-        QUIT_BUTTON = Button(image=pygame.image.load("folder/nameoffile.png"), pos=(640, 250),
-        text_input = "QUIT", font = game_font, base_color = "idkyet", hovering_color = "White")
+        PLAY_BUTTON = Button(image=None, pos=(640, 250),
+                    text_input = "PLAY", font = game_font, base_color = (175,215,70), hovering_color = "White")
+        QUIT_BUTTON = Button(image=None, pos=(640, 250),
+                    text_input = "QUIT", font = game_font, base_color = (175,215,70), hovering_color = "White")
 
-        SCREEN.blit(MENU_TEXT, MENU_RECT)
+        #SCREEN.blit(MENU_TEXT, MENU_RECT)
 
         for button in [PLAY_BUTTON, QUIT_BUTTON]:
             button.changeColor(MENU_MOUSE_POS)
@@ -274,33 +307,33 @@ def Menu():
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if PLAY_BUTTON.checkForInput(MENU_MOUSE_POS):
-                    Game_loop()
+                    game_loop()
                 if QUIT_BUTTON.checkForInput(MENU_MOUSE_POS):
                     pygame.quit()
                     sys.exit()
         
         pygame.display.update()
-
-Menu()
-
+        clock.tick(60)
 
 
-def Game_loop():
+
+
+
+def game_loop():
     pygame.display.set_caption("Play")
-    
-    while True:
+    running = True
+    while running:
 
-        cell_size = 40
-        cell_number = 20
+        #cell_size = 40
+        #cell_number = 20
         screen = pygame.display.set_mode((cell_number * cell_size, cell_number * cell_size)) #size of window
-        clock = pygame.time.Clock()
-        applebig = pygame.image.load('sprites/apple.png').convert_alpha()
-        apple = pygame.transform.smoothscale(applebig, (cell_size, cell_size))
-        powerbig = pygame.image.load('sprites/powerboost.png')
-        power = pygame.transform.smoothscale(powerbig, (cell_size, cell_size))
-        game_font = pygame.font.Font('fonts/Howdy Frog.ttf', 25)
-        pygame.mixer.music.load('sound/music.wav')
-
+        #clock = pygame.time.Clock()
+        #applebig = pygame.image.load('sprites/apple.png').convert_alpha()
+        #apple = pygame.transform.smoothscale(applebig, (cell_size, cell_size))
+        #powerbig = pygame.image.load('sprites/powerboost.png')
+        #power = pygame.transform.smoothscale(powerbig, (cell_size, cell_size))
+        #game_font = pygame.font.Font('fonts/Howdy Frog.ttf', 25)
+        #pygame.mixer.music.load('sound/music.wav')
 
         SCREEN_UPDATE = pygame.USEREVENT
         pygame.time.set_timer(SCREEN_UPDATE, 150)
@@ -334,3 +367,4 @@ def Game_loop():
             
             pygame.display.update()
             clock.tick(60) #framerate
+Menu()
