@@ -252,14 +252,20 @@ class Button:
             self.text = self.font.render(self.text_input, True, self.hovering_color)
         else:
             self.text = self.font.render(self.text_input, True, self.base_color)
-
+def main():
+    while True:
+        Menu(screen)
+        game_loop(screen)
 
 pygame.init()
 
 cell_size = 40
 cell_number = 20
-screen = pygame.display.set_mode((cell_number * cell_size, cell_number * cell_size)) #size of window
+screen_size = (cell_number * cell_size, cell_number * cell_size) #size of window
+screen = pygame.display.set_mode(screen_size)
+
 clock = pygame.time.Clock()
+
 applebig = pygame.image.load('sprites/apple.png').convert_alpha()
 apple = pygame.transform.smoothscale(applebig, (cell_size, cell_size))
 powerbig = pygame.image.load('sprites/powerboost.png')
@@ -270,36 +276,39 @@ game_font = pygame.font.Font('fonts/Howdy Frog.ttf', 25)
 
 
 
-def Menu():
+def Menu(screen):
     pygame.display.set_caption("Menu")
-   
-    while True:
-        SCREEN = pygame.display.set_mode((cell_number * cell_size, cell_number * cell_size))
-        SCREEN.blit(SCREEN, (0,0))
-
+    running = True
+    while running:
+        
+        screen.fill((0,0,0))
         MENU_MOUSE_POS = pygame.mouse.get_pos()
 
-        menu_text = str("Snake Game")
-        title_surface = game_font.render(menu_text,True,"White")
-        title_x = int(cell_size * cell_number // 2)
-        title_y = int(cell_size * cell_number - 500)
-        title_rect = title_surface.get_rect(center = (title_x,title_y))
+        #menu_text = str("Snake Game")
+        #title_surface = game_font.render(menu_text,True,"White")
+        #title_x = int(cell_size * cell_number // 2)
+        #title_y = int(cell_size * cell_number - 500)
+        #title_rect = title_surface.get_rect(center = (title_x,title_y))
+
+        title_surface = game_font.render("Snake Game", True, "White")
+        title_rect = title_surface.get_rect(center=(screen.get_width() // 2, 100))
+        screen.blit(title_surface, title_rect)
         
-        pygame.draw.rect(SCREEN,(167,209,61), title_rect)
-        SCREEN.blit(title_surface,title_rect)
+        #pygame.draw.rect(SCREEN,(167,209,61), title_rect)
+        #SCREEN.blit(title_surface,title_rect)
         
         #MENU_RECT = MENU_TEXT.get_rect(center=(640,100))
 
-        PLAY_BUTTON = Button(image=None, pos=(640, 250),
+        PLAY_BUTTON = Button(image=None, pos=(screen.get_width() // 2,250),
                     text_input = "PLAY", font = game_font, base_color = (175,215,70), hovering_color = "White")
-        QUIT_BUTTON = Button(image=None, pos=(640, 250),
+        QUIT_BUTTON = Button(image=None, pos=(screen.get_width() // 2,350),
                     text_input = "QUIT", font = game_font, base_color = (175,215,70), hovering_color = "White")
 
         #SCREEN.blit(MENU_TEXT, MENU_RECT)
 
         for button in [PLAY_BUTTON, QUIT_BUTTON]:
             button.changeColor(MENU_MOUSE_POS)
-            button.update(SCREEN)
+            button.update(screen)
         
         for event in pygame.event.get():
             if event.type ==pygame.QUIT:
@@ -307,7 +316,7 @@ def Menu():
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if PLAY_BUTTON.checkForInput(MENU_MOUSE_POS):
-                    game_loop()
+                    running = False
                 if QUIT_BUTTON.checkForInput(MENU_MOUSE_POS):
                     pygame.quit()
                     sys.exit()
@@ -326,7 +335,7 @@ def game_loop():
 
         #cell_size = 40
         #cell_number = 20
-        screen = pygame.display.set_mode((cell_number * cell_size, cell_number * cell_size)) #size of window
+        #screen = pygame.display.set_mode((cell_number * cell_size, cell_number * cell_size)) #size of window
         #clock = pygame.time.Clock()
         #applebig = pygame.image.load('sprites/apple.png').convert_alpha()
         #apple = pygame.transform.smoothscale(applebig, (cell_size, cell_size))
@@ -367,4 +376,4 @@ def game_loop():
             
             pygame.display.update()
             clock.tick(60) #framerate
-Menu()
+main()
