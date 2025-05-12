@@ -149,7 +149,7 @@ class MAIN:
         self.power.draw_power()
         self.snake.draw_snake()
         self.draw_score()
-    
+        self.draw_life()
 
     def check_collision(self):
         if self.fruit.pos == self.snake.body[0]:
@@ -218,9 +218,16 @@ class MAIN:
         screen.blit(apple,apple_rect)
         pygame.draw.rect(screen,(56,74,12),bg_rect,2) #frame of score box 2 is the line width
     
-    #def draw_life(self):
-        #life_text = str((self.lives))
-        #life_surface = game_font.render(life_text,True,(56,74,12))
+    def draw_life(self):
+        life_text = str((self.lives))
+        life_surface = game_font.render(life_text,True,(56,74,12))
+        life_x = int(cell_size * cell_number - 730)
+        life_y = int(cell_size * cell_number - 40)
+        life_rect = life_surface.get_rect(center = (life_x,life_y))
+        
+        pygame.draw.rect(screen, (167,209,61), life_rect)
+        screen.blit(life_surface, life_rect)
+        pygame.draw.rect(screen,(56,74,12),life_rect,2)
 
 
 
