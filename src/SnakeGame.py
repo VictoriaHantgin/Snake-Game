@@ -135,6 +135,8 @@ class MAIN:
     def __init__(self):
         self.snake = SNAKE()
         self.fruit = FRUIT()
+        self.power = POWER()
+        self.lives = 1
     
     def update(self):
         self.snake.move_snake()
@@ -144,6 +146,7 @@ class MAIN:
     def draw_elements(self):
         self.draw_grass()
         self.fruit.draw_fruit()
+        self.power.draw_power()
         self.snake.draw_snake()
         self.draw_score()
     
@@ -153,22 +156,36 @@ class MAIN:
             self.fruit.randomize()
             self.snake.add_block()
             self.snake.play_crunch_sound()
-
+        
         for block in self.snake.body[1:]:
             if block == self.fruit.pos:
                 self.fruit.randomize()
+        
+        if self.power.pos == self.snake.body[0]:
+            self.power.spawn()
+            self.lives = self.lives + 1
+            
+
 
     def check_fail(self):
         # check if the snake is outside the screen
         if not 0 <= self.snake.body[0].x < cell_number or not 0 <= self.snake.body[0].y < cell_number:
+            self.lives = self.lives - 1
             self.game_over()
         #check if snake hits itself
         for block in self.snake.body[1:]:
             if block == self.snake.body[0]:
+                self.lives = self.lives - 1
                 self.game_over()
        
     def game_over(self):
-        self.snake.reset()
+
+        if self.lives > 0:
+            self.snake.reset()
+        else:
+            #return to main menu
+            self.snake.reset()
+            
     
         #pygame.quit()
         #sys.exit()
@@ -200,6 +217,11 @@ class MAIN:
         screen.blit(score_surface,score_rect)
         screen.blit(apple,apple_rect)
         pygame.draw.rect(screen,(56,74,12),bg_rect,2) #frame of score box 2 is the line width
+    
+    #def draw_life(self):
+        #life_text = str((self.lives))
+        #life_surface = game_font.render(life_text,True,(56,74,12))
+
 
 
 pygame.init()
