@@ -1,6 +1,9 @@
 import pygame, sys, random
 from pygame.math import Vector2
 
+class RETURNTOMENU(Exception):
+    pass
+
 class SNAKE:
     def __init__(self):
         self.body = [Vector2(5,10), Vector2(4,10), Vector2(3,10)] #starting pos of snake
@@ -176,12 +179,11 @@ class MAIN:
        
     def game_over(self):
         if self.lives > 0:
-            self.lives = self.lives - 1
+            self.lives -= 1
             self.snake.reset()
         else:
             #return to main menu
-            self.snake.reset()
-            running = False
+            raise RETURNTOMENU()
             
     
     def draw_grass(self):
@@ -325,13 +327,14 @@ def Menu(screen):
         clock.tick(60)
 
 
-
-
-
-def game_loop():
+def game_loop(screen):
     pygame.display.set_caption("Play")
-    running = True
-    while running:
+    main_game = MAIN()
+    SCREEN_UPDATE = pygame.USEREVENT
+    pygame.time.set_timer(SCREEN_UPDATE, 150)
+    pygame.mixer.music.play(-1, 0.0)
+    
+    try: 
 
         #cell_size = 40
         #cell_number = 20
@@ -344,36 +347,38 @@ def game_loop():
         #game_font = pygame.font.Font('fonts/Howdy Frog.ttf', 25)
         #pygame.mixer.music.load('sound/music.wav')
 
-        SCREEN_UPDATE = pygame.USEREVENT
-        pygame.time.set_timer(SCREEN_UPDATE, 150)
-        pygame.mixer.music.play(-1, 0.0)
+        #SCREEN_UPDATE = pygame.USEREVENT
+        #pygame.time.set_timer(SCREEN_UPDATE, 150)
+        #pygame.mixer.music.play(-1, 0.0)
 
-        main_game = MAIN()
+        #main_game = MAIN()
 
-        while True:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()
-                if event.type == SCREEN_UPDATE:
-                    main_game.update()
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_UP:
-                        if main_game.snake.direction.y != 1:
-                            main_game.snake.direction = Vector2(0, -1)
-                    if event.key == pygame.K_RIGHT:
-                        if main_game.snake.direction.x != -1:
-                            main_game.snake.direction = Vector2(1, 0)
-                    if event.key == pygame.K_DOWN:
-                        if main_game.snake.direction.y != -1:
-                            main_game.snake.direction = Vector2(0, 1)
-                    if event.key == pygame.K_LEFT:
-                        if main_game.snake.direction.x != 1:
-                            main_game.snake.direction = Vector2(-1, 0)
+            while True:
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        pygame.quit()
+                        sys.exit()
+                    if event.type == SCREEN_UPDATE:
+                        main_game.update()
+                    if event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_UP:
+                            if main_game.snake.direction.y != 1:
+                                main_game.snake.direction = Vector2(0, -1)
+                        if event.key == pygame.K_RIGHT:
+                            if main_game.snake.direction.x != -1:
+                                main_game.snake.direction = Vector2(1, 0)
+                        if event.key == pygame.K_DOWN:
+                            if main_game.snake.direction.y != -1:
+                                main_game.snake.direction = Vector2(0, 1)
+                        if event.key == pygame.K_LEFT:
+                            if main_game.snake.direction.x != 1:
+                                main_game.snake.direction = Vector2(-1, 0)
 
-            screen.fill((175,215,70)) #screen color
-            main_game.draw_elements()
-            
-            pygame.display.update()
-            clock.tick(60) #framerate
+                screen.fill((175,215,70)) #screen color
+                main_game.draw_elements()
+                pygame.display.update()
+                clock.tick(60) #framerate
+    
+    except RETURNTOMENU:
+        return  
 main()
