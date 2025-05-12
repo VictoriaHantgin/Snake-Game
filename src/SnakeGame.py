@@ -222,6 +222,16 @@ class MAIN:
         screen.blit(life_surface, life_rect)
         pygame.draw.rect(screen,(56,74,12),life_rect,2)
 
+class BUTTON:
+    def __init__(self, image, pos, text_input, font, base_color, hovering_color):
+        self.image = image
+        self.x_pos = pos[0]
+        self.y_pos = pos[1]
+        self.font = font
+        self.base_color, self.hovering_color = base_color, hovering_color
+        self.text_input = text_input 
+
+
 pygame.init()
 
 def Menu():
@@ -245,52 +255,70 @@ def Menu():
         for button in [PLAY_BUTTON, QUIT_BUTTON]:
             button.changeColor(MENU_MOUSE_POS)
             button.update(SCREEN)
+        
+        for event in pygame.event.get():
+            if event.type ==pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if PLAY_BUTTON.checkForInput(MENU_MOUSE_POS):
+                    Game_loop()
+                if QUIT_BUTTON.checkForInput(MENU_MOUSE_POS):
+                    pygame.quit()
+                    sys.exit()
+        
+        pygame.display.update()
+
+Menu()
+
 
 
 def Game_loop():
+    pygame.display.set_caption("Play")
+    
     while True:
 
-    cell_size = 40
-    cell_number = 20
-    screen = pygame.display.set_mode((cell_number * cell_size, cell_number * cell_size)) #size of window
-    clock = pygame.time.Clock()
-    applebig = pygame.image.load('sprites/apple.png').convert_alpha()
-    apple = pygame.transform.smoothscale(applebig, (cell_size, cell_size))
-    powerbig = pygame.image.load('sprites/powerboost.png')
-    power = pygame.transform.smoothscale(powerbig, (cell_size, cell_size))
-    game_font = pygame.font.Font('fonts/Howdy Frog.ttf', 25)
-    pygame.mixer.music.load('sound/music.wav')
+        cell_size = 40
+        cell_number = 20
+        screen = pygame.display.set_mode((cell_number * cell_size, cell_number * cell_size)) #size of window
+        clock = pygame.time.Clock()
+        applebig = pygame.image.load('sprites/apple.png').convert_alpha()
+        apple = pygame.transform.smoothscale(applebig, (cell_size, cell_size))
+        powerbig = pygame.image.load('sprites/powerboost.png')
+        power = pygame.transform.smoothscale(powerbig, (cell_size, cell_size))
+        game_font = pygame.font.Font('fonts/Howdy Frog.ttf', 25)
+        pygame.mixer.music.load('sound/music.wav')
 
 
-    SCREEN_UPDATE = pygame.USEREVENT
-    pygame.time.set_timer(SCREEN_UPDATE, 150)
-    pygame.mixer.music.play(-1, 0.0)
+        SCREEN_UPDATE = pygame.USEREVENT
+        pygame.time.set_timer(SCREEN_UPDATE, 150)
+        pygame.mixer.music.play(-1, 0.0)
 
-    main_game = MAIN()
+        main_game = MAIN()
 
-    while True:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-            if event.type == SCREEN_UPDATE:
-                main_game.update()
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_UP:
-                    if main_game.snake.direction.y != 1:
-                        main_game.snake.direction = Vector2(0, -1)
-                if event.key == pygame.K_RIGHT:
-                    if main_game.snake.direction.x != -1:
-                        main_game.snake.direction = Vector2(1, 0)
-                if event.key == pygame.K_DOWN:
-                    if main_game.snake.direction.y != -1:
-                        main_game.snake.direction = Vector2(0, 1)
-                if event.key == pygame.K_LEFT:
-                    if main_game.snake.direction.x != 1:
-                        main_game.snake.direction = Vector2(-1, 0)
+        while True:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                if event.type == SCREEN_UPDATE:
+                    main_game.update()
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_UP:
+                        if main_game.snake.direction.y != 1:
+                            main_game.snake.direction = Vector2(0, -1)
+                    if event.key == pygame.K_RIGHT:
+                        if main_game.snake.direction.x != -1:
+                            main_game.snake.direction = Vector2(1, 0)
+                    if event.key == pygame.K_DOWN:
+                        if main_game.snake.direction.y != -1:
+                            main_game.snake.direction = Vector2(0, 1)
+                    if event.key == pygame.K_LEFT:
+                        if main_game.snake.direction.x != 1:
+                            main_game.snake.direction = Vector2(-1, 0)
 
-        screen.fill((175,215,70)) #screen color
-        main_game.draw_elements()
-        
-        pygame.display.update()
-        clock.tick(60) #framerate
+            screen.fill((175,215,70)) #screen color
+            main_game.draw_elements()
+            
+            pygame.display.update()
+            clock.tick(60) #framerate
