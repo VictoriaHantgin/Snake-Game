@@ -161,6 +161,7 @@ class MAIN:
         self.power = POWER()
         self.lives = 0
         self.reset_time = None
+        self.score = 0
     
     def update(self):
         if self.reset_time:
@@ -187,6 +188,7 @@ class MAIN:
             self.fruit.randomize()
             self.snake.add_block()
             self.snake.play_crunch_sound()
+            self.score += 1
         
         for block in self.snake.body[1:]:
             if block == self.fruit.pos:
@@ -216,7 +218,7 @@ class MAIN:
             self.lives -= 1
             self.reset_snake()
         else:
-            #return to main menu
+            self.score = 0
             raise RETURNTOMENU()
             
     
@@ -235,7 +237,7 @@ class MAIN:
                         pygame.draw.rect(screen,grass_color,grass_rect)
    
     def draw_score(self):
-        score_text = str(len(self.snake.body) - 3)
+        score_text = str(self.score)
         score_surface = game_font.render(score_text,True,(56,74,12))
         score_x = int(cell_size * cell_number - 60)
         score_y = int(cell_size * cell_number - 40)
@@ -363,10 +365,12 @@ def Menu(screen):
 
 def game_loop(screen):
     pygame.display.set_caption("Play")
+    pygame.mixer.music.play(-1, 0.0) 
+    running = True
     main_game = MAIN()
     SCREEN_UPDATE = pygame.USEREVENT
     pygame.time.set_timer(SCREEN_UPDATE, 150)
-    pygame.mixer.music.play(-1, 0.0)
+    
     
     try:
         while True: 
@@ -396,6 +400,7 @@ def game_loop(screen):
             pygame.display.update()
             clock.tick(60) #framerate
     except RETURNTOMENU:
+        pygame.mixer.music.stop()
         return
     
 main()
