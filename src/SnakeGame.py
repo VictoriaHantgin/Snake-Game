@@ -1,4 +1,4 @@
-import pygame, sys, random
+import pygame, sys, random, time
 from pygame.math import Vector2
 
 class RETURNTOMENU(Exception):
@@ -123,21 +123,36 @@ class FRUIT:
 
 class POWER:
 
-    #spawn only once per round, and lasts only 7 seconds before despawning
-    #will need to use a timer of some sort
-    
-
     def __init__(self):
-        self.spawn()
+        self.active = False
+        self.spawn_time = 0
+        self.last_spawn = time.time()
 
     def draw_power(self):
-       power_rect = pygame.Rect(int(self.pos.x * cell_size),int(self.pos.y * cell_size),cell_size,cell_size)
-       screen.blit(power, power_rect)
+       if self.active: 
+        power_rect = pygame.Rect(int(self.pos.x * cell_size),int(self.pos.y * cell_size),cell_size,cell_size)
+        screen.blit(power, power_rect)
 
     def spawn(self):
         self.x = random.randint(0, cell_number - 1)
         self.y = random.randint(0, cell_number - 1)
         self.pos = pygame.math.Vector2(self.x,self.y)
+        self.active = True
+        self.spawn_time = time.time()
+        self.last_spawn = self.spawn_time
+
+    def update(self):
+        current_time = time.time()
+
+        if self.active and (current_time - self.spawn_time > 7):
+            self.despawn()
+        elif not self.active and (current_time - self.spawn_time > 20):
+            self.spawn()
+
+
+    def despawn(self):
+        self.active = False
+        self.last_spawn = time.time()
        
 class MAIN:
     def __init__(self):
@@ -150,6 +165,7 @@ class MAIN:
         self.snake.move_snake()
         self.check_collision()
         self.check_fail()
+        self.power.update()
 
     def draw_elements(self):
         self.draw_grass()
@@ -169,9 +185,9 @@ class MAIN:
             if block == self.fruit.pos:
                 self.fruit.randomize()
         
-        if self.power.pos == self.snake.body[0]:
-            self.power.spawn()
-            self.lives = self.lives + 1
+        if self.power.active and self.power.pos == self.snake.body[0]:
+            self.power.despawn()
+            self.lives += 1
             
     def check_fail(self):
         # check if the snake is outside the screen
