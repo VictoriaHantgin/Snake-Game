@@ -85,6 +85,7 @@ class SNAKE:
         if self.new_block == True:
             body_copy = self.body[:] 
             body_copy.insert(0,body_copy[0] + self.direction) 
+            self.body = body_copy
             self.new_block = False
         else:
             body_copy = self.body[:-1] 
@@ -287,6 +288,7 @@ class Button:
             self.text = self.font.render(self.text_input, True, self.hovering_color)
         else:
             self.text = self.font.render(self.text_input, True, self.base_color)
+
 def main():
     while True:
         Menu(screen)
@@ -344,6 +346,19 @@ def Menu(screen):
         pygame.display.update()
         clock.tick(60)
 
+def game_over_screen(final_score):  
+    screen.fill((0, 0, 0))
+    game_over_text = game_font.render("Game Over!", True, (255,0,0))
+    final_score_text = game_font.render(f"Final Score: {final_score}", True, (255,255,255))
+
+    game_over_rect = game_over_text.get_rect(center=(cell_number * cell_size // 2, cell_number * cell_size //2 - 35))
+    score_rect = final_score_text.get_rect(center=(cell_number * cell_size // 2, cell_number * cell_size //2 + 25))
+
+    screen.blit(game_over_text, game_over_rect)
+    screen.blit(final_score_text, score_rect)
+
+    pygame.display.update()
+    pygame.time.delay(2500)
 
 def game_loop(screen):
     pygame.display.set_caption("Play")
@@ -379,9 +394,11 @@ def game_loop(screen):
             screen.fill((175,215,70)) 
             main_game.draw_elements()
             pygame.display.update()
-            clock.tick(60) 
+            clock.tick(60)     
     except RETURNTOMENU:
+        game_over_screen(main_game.score)
         pygame.mixer.music.stop()
         return
-    
+
+
 main()
