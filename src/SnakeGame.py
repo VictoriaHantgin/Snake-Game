@@ -7,7 +7,7 @@ class RETURNTOMENU(Exception):
 class SNAKE:
     def __init__(self):
         self.body = [Vector2(5,10), Vector2(4,10), Vector2(3,10)] #starting pos of snake
-        self.direction = Vector2(0,0)
+        self.direction = Vector2(1,0)
         self.new_block = False
 
         self.head_up = pygame.image.load('sprites/head_up.png').convert_alpha()
@@ -122,6 +122,11 @@ class FRUIT:
         self.pos = pygame.math.Vector2(self.x,self.y)
 
 class POWER:
+
+    #spawn only once per round, and lasts only 7 seconds before despawning
+    #will need to use a timer of some sort
+    
+
     def __init__(self):
         self.spawn()
 
@@ -139,7 +144,7 @@ class MAIN:
         self.snake = SNAKE()
         self.fruit = FRUIT()
         self.power = POWER()
-        self.lives = 1
+        self.lives = 0
     
     def update(self):
         self.snake.move_snake()
