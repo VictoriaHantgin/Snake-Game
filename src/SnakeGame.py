@@ -6,7 +6,7 @@ class RETURNTOMENU(Exception):
 
 class SNAKE:
     def __init__(self):
-        self.body = [Vector2(5,10), Vector2(4,10), Vector2(3,10)] #starting pos of snake
+        self.body = [Vector2(5,10), Vector2(4,10), Vector2(3,10)] 
         self.direction = Vector2(1,0)
         self.new_block = False
 
@@ -43,13 +43,11 @@ class SNAKE:
             y_pos = int(block.y * cell_size)
             block_rect = pygame.Rect(x_pos, y_pos, cell_size, cell_size)
 
-            #what direction is face heading
-
             if index == 0:
                 screen.blit(self.head,block_rect)
             elif index == len(self.body) - 1:
                 screen.blit(self.tail,block_rect)
-            #what direction is body facing
+            
             else: 
                 previous_block = self.body[index + 1] - block
                 next_block = self.body[index - 1] - block
@@ -85,12 +83,11 @@ class SNAKE:
     
     def move_snake(self):
         if self.new_block == True:
-            body_copy = self.body[:] #copies entire self.body list 
-            body_copy.insert(0,body_copy[0] + self.direction) #places the first element(head) one block ahead, based on the direction
-            self.body = body_copy[:]
+            body_copy = self.body[:] 
+            body_copy.insert(0,body_copy[0] + self.direction) 
             self.new_block = False
         else:
-            body_copy = self.body[:-1] #copies entire self.body list except for last element
+            body_copy = self.body[:-1] 
             body_copy.insert(0,body_copy[0] + self.direction) 
             self.body = body_copy[:]
 
@@ -104,7 +101,7 @@ class SNAKE:
         self.life_sound.play()
 
     def reset(self):
-        self.body = [Vector2(5,10), Vector2(4,10), Vector2(3,10)] #starting pos of snake
+        self.body = [Vector2(5,10), Vector2(4,10), Vector2(3,10)] 
         self.direction = Vector2(0,0)
         
 class FRUIT:
@@ -114,7 +111,7 @@ class FRUIT:
     def draw_fruit(self):
        fruit_rect = pygame.Rect(int(self.pos.x * cell_size),int(self.pos.y * cell_size),cell_size,cell_size)
        screen.blit(apple, fruit_rect)
-       #pygame.draw.rect(screen, (126, 166, 114), fruit_rect)
+       
 
     def randomize(self):
         self.x = random.randint(0, cell_number - 1)
@@ -200,10 +197,10 @@ class MAIN:
             self.snake.play_life_sound()
             
     def check_fail(self):
-        # check if the snake is outside the screen
+        
         if not 0 <= self.snake.body[0].x < cell_number or not 0 <= self.snake.body[0].y < cell_number:
             self.game_over()
-        #check if snake hits itself
+        
         for block in self.snake.body[1:]:
             if block == self.snake.body[0]:
                 self.game_over()
@@ -248,7 +245,7 @@ class MAIN:
         pygame.draw.rect(screen,(167,209,61), bg_rect)
         screen.blit(score_surface,score_rect)
         screen.blit(apple,apple_rect)
-        pygame.draw.rect(screen,(56,74,12),bg_rect,2) #frame of score box 2 is the line width
+        pygame.draw.rect(screen,(56,74,12),bg_rect,2) 
     
     def draw_life(self):
         life_text = f"Lives: {self.lives + 1}"
@@ -299,7 +296,7 @@ pygame.init()
 
 cell_size = 40
 cell_number = 20
-screen_size = (cell_number * cell_size, cell_number * cell_size) #size of window
+screen_size = (cell_number * cell_size, cell_number * cell_size) 
 screen = pygame.display.set_mode(screen_size)
 
 clock = pygame.time.Clock()
@@ -309,10 +306,8 @@ apple = pygame.transform.smoothscale(applebig, (cell_size, cell_size))
 powerbig = pygame.image.load('sprites/life.png')
 power = pygame.transform.smoothscale(powerbig, (cell_size, cell_size))
 pygame.mixer.music.load('sound/music.wav')
-#SCREEN = pygame.display.set_mode((1280, 720))
+
 game_font = pygame.font.Font('fonts/Howdy Frog.ttf', 25)
-
-
 
 def Menu(screen):
     pygame.display.set_caption("Menu")
@@ -322,27 +317,14 @@ def Menu(screen):
         screen.fill((0,0,0))
         MENU_MOUSE_POS = pygame.mouse.get_pos()
 
-        #menu_text = str("Snake Game")
-        #title_surface = game_font.render(menu_text,True,"White")
-        #title_x = int(cell_size * cell_number // 2)
-        #title_y = int(cell_size * cell_number - 500)
-        #title_rect = title_surface.get_rect(center = (title_x,title_y))
-
         title_surface = game_font.render("Snake Game", True, "White")
         title_rect = title_surface.get_rect(center=(screen.get_width() // 2, 100))
         screen.blit(title_surface, title_rect)
-        
-        #pygame.draw.rect(SCREEN,(167,209,61), title_rect)
-        #SCREEN.blit(title_surface,title_rect)
-        
-        #MENU_RECT = MENU_TEXT.get_rect(center=(640,100))
 
         PLAY_BUTTON = Button(image=None, pos=(screen.get_width() // 2,250),
                     text_input = "PLAY", font = game_font, base_color = (175,215,70), hovering_color = "White")
         QUIT_BUTTON = Button(image=None, pos=(screen.get_width() // 2,350),
                     text_input = "QUIT", font = game_font, base_color = (175,215,70), hovering_color = "White")
-
-        #SCREEN.blit(MENU_TEXT, MENU_RECT)
 
         for button in [PLAY_BUTTON, QUIT_BUTTON]:
             button.changeColor(MENU_MOUSE_POS)
@@ -371,7 +353,6 @@ def game_loop(screen):
     SCREEN_UPDATE = pygame.USEREVENT
     pygame.time.set_timer(SCREEN_UPDATE, 150)
     
-    
     try:
         while True: 
         
@@ -395,10 +376,10 @@ def game_loop(screen):
                         if main_game.snake.direction.x != 1:
                             main_game.snake.direction = Vector2(-1, 0)
 
-            screen.fill((175,215,70)) #screen color
+            screen.fill((175,215,70)) 
             main_game.draw_elements()
             pygame.display.update()
-            clock.tick(60) #framerate
+            clock.tick(60) 
     except RETURNTOMENU:
         pygame.mixer.music.stop()
         return
