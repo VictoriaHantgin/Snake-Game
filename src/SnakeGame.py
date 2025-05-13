@@ -29,6 +29,7 @@ class SNAKE:
         self.body_bl = pygame.image.load('sprites/body_bl.png').convert_alpha()
 
         self.crunch_sound = pygame.mixer.Sound('sound/crunch.wav')
+        self.life_sound = pygame.mixer.Sound('sound/life.wav')
         
 
 
@@ -83,10 +84,6 @@ class SNAKE:
         elif tail_relation == Vector2(0,-1):self.tail = self.tail_down
     
     def move_snake(self):
-    #moving the snake: the head is moved to a new block
-    # the block before the head gets the position where the head used to be 
-    # each block is moved to the position of the block that was there before it
-    # "delete" the last block
         if self.new_block == True:
             body_copy = self.body[:] #copies entire self.body list 
             body_copy.insert(0,body_copy[0] + self.direction) #places the first element(head) one block ahead, based on the direction
@@ -102,6 +99,9 @@ class SNAKE:
 
     def play_crunch_sound(self):
         self.crunch_sound.play()
+    
+    def play_life_sound(self):
+        self.life_sound.play()
 
     def reset(self):
         self.body = [Vector2(5,10), Vector2(4,10), Vector2(3,10)] #starting pos of snake
@@ -160,12 +160,19 @@ class MAIN:
         self.fruit = FRUIT()
         self.power = POWER()
         self.lives = 0
+        self.reset_time = None
     
     def update(self):
+        if self.reset_time:
+            if time.time() - self.reset_time < 1.5:
+                return
+            else:
+                self.reset_time = None
         self.snake.move_snake()
         self.check_collision()
         self.check_fail()
         self.power.update()
+        
 
     def draw_elements(self):
         self.draw_grass()
@@ -188,6 +195,7 @@ class MAIN:
         if self.power.active and self.power.pos == self.snake.body[0]:
             self.power.despawn()
             self.lives += 1
+            self.snake.play_life_sound()
             
     def check_fail(self):
         # check if the snake is outside the screen
@@ -198,10 +206,15 @@ class MAIN:
             if block == self.snake.body[0]:
                 self.game_over()
        
+    def reset_snake(self):
+        self.snake.reset()
+        self.reset_time = time.time()
+
+
     def game_over(self):
         if self.lives > 0:
             self.lives -= 1
-            self.snake.reset()
+            self.reset_snake()
         else:
             #return to main menu
             raise RETURNTOMENU()
@@ -236,7 +249,7 @@ class MAIN:
         pygame.draw.rect(screen,(56,74,12),bg_rect,2) #frame of score box 2 is the line width
     
     def draw_life(self):
-        life_text = str((self.lives + 1))
+        life_text = f"Lives: {self.lives + 1}"
         life_surface = game_font.render(life_text,True,(56,74,12))
         life_x = int(cell_size * cell_number - 730)
         life_y = int(cell_size * cell_number - 40)
@@ -291,7 +304,7 @@ clock = pygame.time.Clock()
 
 applebig = pygame.image.load('sprites/apple.png').convert_alpha()
 apple = pygame.transform.smoothscale(applebig, (cell_size, cell_size))
-powerbig = pygame.image.load('sprites/powerboost.png')
+powerbig = pygame.image.load('sprites/life.png')
 power = pygame.transform.smoothscale(powerbig, (cell_size, cell_size))
 pygame.mixer.music.load('sound/music.wav')
 #SCREEN = pygame.display.set_mode((1280, 720))
@@ -355,51 +368,34 @@ def game_loop(screen):
     pygame.time.set_timer(SCREEN_UPDATE, 150)
     pygame.mixer.music.play(-1, 0.0)
     
-    try: 
+    try:
+        while True: 
+        
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                if event.type == SCREEN_UPDATE:
+                    main_game.update()
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_UP:
+                        if main_game.snake.direction.y != 1:
+                            main_game.snake.direction = Vector2(0, -1)
+                    if event.key == pygame.K_RIGHT:
+                        if main_game.snake.direction.x != -1:
+                            main_game.snake.direction = Vector2(1, 0)
+                    if event.key == pygame.K_DOWN:
+                        if main_game.snake.direction.y != -1:
+                            main_game.snake.direction = Vector2(0, 1)
+                    if event.key == pygame.K_LEFT:
+                        if main_game.snake.direction.x != 1:
+                            main_game.snake.direction = Vector2(-1, 0)
 
-        #cell_size = 40
-        #cell_number = 20
-        #screen = pygame.display.set_mode((cell_number * cell_size, cell_number * cell_size)) #size of window
-        #clock = pygame.time.Clock()
-        #applebig = pygame.image.load('sprites/apple.png').convert_alpha()
-        #apple = pygame.transform.smoothscale(applebig, (cell_size, cell_size))
-        #powerbig = pygame.image.load('sprites/powerboost.png')
-        #power = pygame.transform.smoothscale(powerbig, (cell_size, cell_size))
-        #game_font = pygame.font.Font('fonts/Howdy Frog.ttf', 25)
-        #pygame.mixer.music.load('sound/music.wav')
-
-        #SCREEN_UPDATE = pygame.USEREVENT
-        #pygame.time.set_timer(SCREEN_UPDATE, 150)
-        #pygame.mixer.music.play(-1, 0.0)
-
-        #main_game = MAIN()
-
-            while True:
-                for event in pygame.event.get():
-                    if event.type == pygame.QUIT:
-                        pygame.quit()
-                        sys.exit()
-                    if event.type == SCREEN_UPDATE:
-                        main_game.update()
-                    if event.type == pygame.KEYDOWN:
-                        if event.key == pygame.K_UP:
-                            if main_game.snake.direction.y != 1:
-                                main_game.snake.direction = Vector2(0, -1)
-                        if event.key == pygame.K_RIGHT:
-                            if main_game.snake.direction.x != -1:
-                                main_game.snake.direction = Vector2(1, 0)
-                        if event.key == pygame.K_DOWN:
-                            if main_game.snake.direction.y != -1:
-                                main_game.snake.direction = Vector2(0, 1)
-                        if event.key == pygame.K_LEFT:
-                            if main_game.snake.direction.x != 1:
-                                main_game.snake.direction = Vector2(-1, 0)
-
-                screen.fill((175,215,70)) #screen color
-                main_game.draw_elements()
-                pygame.display.update()
-                clock.tick(60) #framerate
-    
+            screen.fill((175,215,70)) #screen color
+            main_game.draw_elements()
+            pygame.display.update()
+            clock.tick(60) #framerate
     except RETURNTOMENU:
-        return  
+        return
+    
 main()
