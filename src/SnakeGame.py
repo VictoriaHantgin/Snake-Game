@@ -216,7 +216,6 @@ class MAIN:
             self.lives -= 1
             self.reset_snake()
         else:
-            self.score = 0
             raise RETURNTOMENU()
             
     
