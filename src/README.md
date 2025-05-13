@@ -5,7 +5,7 @@ A spin on the classic Snake Game made using Pygame.
 (url)
 
 # GITHUB REPOSITORY
-(Url)
+https://github.com/VictoriaHantgin/Snake-Game
 
 ## DESCRIPTION
 
@@ -14,3 +14,9 @@ My Snake Game is a spin on the classic snake game that we all know and love. The
 I have included multiple files that make up the sprite of the snake, apple, and life power(medkit). These will be found in the "sprites" folder. There is also a folder labeled "sound" which contains the sound effects and music for the game. Finally, there is a folder labeled "fonts" that contain the fonts for the game. 
 
 Originally, I had hoped to implement a speed boost power, but could not seem to find a way to successfully implement it. Instead, I decided to add a menu system to the game, so that the player is not immediately thrust into gameplay. 
+
+# SOURCES
+
+I followed this tutorial when building the basic snake game loop, and also used their free sprite assets for the snake:
+
+https://youtu.be/QFvqStqPCRU?si=PEt2Qvd-DPqimLD_
